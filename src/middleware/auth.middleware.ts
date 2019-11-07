@@ -24,7 +24,7 @@ export class AuthMiddleware implements NestMiddleware {
     const tokenSlice = token.replace('Bearer ', '');
 
     try {
-      await jwt.verify(tokenSlice, 'secret', (error, decoded) => {
+      await jwt.verify(tokenSlice, 'rahasia', (error, decoded) => {
         if (error) {
           throw new UnauthorizedException();
         } else {

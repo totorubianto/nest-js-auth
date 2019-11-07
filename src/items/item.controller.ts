@@ -8,38 +8,41 @@ import {
   Param,
   HttpException,
   HttpStatus,
-  SetMetadata,
-  UseFilters,
   UsePipes,
   UseGuards,
-  Res,
-  Request,
-  UseInterceptors,
+  Headers,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ItemService } from './item.services';
 import { CreateItemDto } from './dto/create-item.dto';
 import { Item } from './interfaces/item.interface';
-import { HttpExceptionFilter } from '../middleware/http-exception.filter';
+import { ValidationPipe } from '../middleware/validate.pipe';
+import { UserCustom } from '../middleware/userLogged.decorator';
+// import { HttpExceptionFilter } from '../middleware/http-exception.filter';
+import { Roles } from '../middleware/guard.decorator';
+import { RolesGuard } from '../middleware/user.guard';
 
-@Controller()
-
+@Controller('item')
+@UseGuards(RolesGuard)
+@UsePipes(ValidationPipe)
 // @UseInterceptors(ErrorsInterceptor)
 // @UseInterceptors(CacheInterceptor)
 // @UseInterceptors(TimeoutInterceptor)
 export class ItemController {
   constructor(private readonly itemService: ItemService) {}
 
-  @Get('item')
+  @Get()
+  @Roles('admin')
   findAll(): Promise<Item[]> {
     return this.itemService.findAll();
   }
 
-  @Get('item/exception')
+  @Get('exception')
   exception(): Promise<Item[]> {
     throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
   }
 
-  @Get('item/custom-exception')
+  @Get('custom-exception')
   async customException() {
     throw new HttpException(
       {
@@ -50,23 +53,32 @@ export class ItemController {
     );
   }
 
-  @Get('item/:id')
+  @Get(':id')
   findOne(@Param('id') id): Promise<Item> {
     return this.itemService.findOne(id);
   }
 
-  @Post('item')
-  create(@Body() createItemDto: CreateItemDto) {
-    return this.itemService.create(createItemDto);
+  @Post('')
+  @UseGuards(AuthGuard())
+  @Roles('admin')
+  create(@Body() createItemDto: CreateItemDto, @UserCustom() data: any) {
+    return this.itemService.create(createItemDto, data);
   }
 
-  @Delete('item/:id')
+  @Delete(':id')
   delete(@Param('id') id): Promise<Item> {
     return this.itemService.delete(id);
   }
 
-  @Put('item/:id')
-  update(@Body() updateItemDto: CreateItemDto, @Param('id') id): Promise<Item> {
+  @Put(':id')
+  @UseGuards(AuthGuard())
+  @Roles('user')
+  update(
+    @Body() updateItemDto: CreateItemDto,
+    @Param('id') id,
+    @UserCustom() data: any,
+  ): Promise<Item> {
+    console.log(data);
     return this.itemService.update(id, updateItemDto);
   }
 }

@@ -27,6 +27,7 @@ export class AuthService {
     );
 
     return new Promise(resolve => {
+      if (!userToAttempt) throw new UnauthorizedException();
       userToAttempt.checkPassword(loginAttempt.password, (err, isMatch) => {
         if (err) throw new UnauthorizedException();
 
@@ -61,19 +62,17 @@ export class AuthService {
       const data = await this.authModel.findOne({ token: tokenNotBearer });
       return data;
     } catch (error) {
-      throw Error('data gk ada');
+      throw new UnauthorizedException();
     }
   }
 
   async validateUserByJwt(payload: JwtPayload, token: string) {
     let user = await this.findTokenEmail(token);
-
     if (user) {
       const data = JWT(user.token);
       const expiresIn = data.exp * 1000;
-      const now = new Date();
-      console.log(expiresIn, now);
-      if (expiresIn > now.getTime()) {
+
+      if (expiresIn > Date.now()) {
         return this.createJwtPayload(payload);
       } else {
         throw new UnauthorizedException();
@@ -89,7 +88,6 @@ export class AuthService {
       email: user.email,
       role: user.role,
     };
-
     let jwt = this.jwtService.sign(data);
 
     return {

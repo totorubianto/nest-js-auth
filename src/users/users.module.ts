@@ -15,7 +15,7 @@ import { AuthMiddleware } from '../middleware/auth.middleware';
   providers: [UsersService],
 })
 export class UsersModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).forRoutes(UsersController);
-  }
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer.apply(AuthMiddleware).forRoutes(UsersController);
+  // }
 }

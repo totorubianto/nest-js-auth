@@ -1,21 +1,56 @@
 import { Injectable } from '@nestjs/common';
 import { Item } from './interfaces/item.interface';
 import { Model } from 'mongoose';
+import mongoose from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-
+import { UsersService } from '../users/users.service';
+import { _ } from 'lodash';
 @Injectable()
 export class ItemService {
-  constructor(@InjectModel('Item') private readonly itemModel: Model<Item>) {}
+  constructor(
+    @InjectModel('Item') private readonly itemModel: Model<Item>,
+    private readonly usersService: UsersService,
+  ) {}
 
-  async findAll(): Promise<Item[]> {
-    return await this.itemModel.find();
+  async findAll(): Promise<any[]> {
+    const data = await this.itemModel.find().populate('user');
+
+    // let hash = Object.create(null);
+
+    // let result = data.map(
+    //   (hash => item =>
+    //     (hash[item.user] = {
+    //       _id: item._id,
+    //       item: item.item,
+    //       description: item.description,
+    //       user: item.user,
+    //       users: {},
+    //     }))(hash),
+    // );
+    // data.map(itemLoop => {
+    //   user.forEach(
+    //     (hash => user => {
+    //       if (_.findKey(data, { user: user._id })) {
+    //         hash[user._id].users = {
+    //           _id: user._id,
+    //           email: user.email,
+    //           role: user.role,
+    //         };
+    //       }
+    //     })(hash),
+    //   );
+    // });
+
+    return data;
   }
 
   async findOne(id: string): Promise<Item> {
     return await this.itemModel.findOne({ _id: id });
   }
 
-  async create(item: Item): Promise<Item> {
+  async create(item: Item, data): Promise<Item> {
+    let itemData = item;
+    itemData.user = data;
     const newItem = new this.itemModel(item);
     return await newItem.save();
   }

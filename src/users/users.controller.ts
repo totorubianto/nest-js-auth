@@ -8,6 +8,7 @@ import {
   Headers,
   Request,
 } from '@nestjs/common';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { TokenDto } from './dto/create-token.dto';
 import { UsersService } from './users.service';
@@ -24,15 +25,16 @@ export class UsersController {
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
   }
-
+  @Get()
+  findAll(): Promise<any[]> {
+    return this.usersService.findAll();
+  }
   @Get('test')
   @UseGuards(AuthGuard())
-  // @UseGuards(RolesGuard)
-  // @Roles('admin')
   testAuthRoute(@Headers() token: TokenDto, @Request() req) {
-    // console.log('Cookies: ', req.cookies._mc);
+    const dataToken = token['authorization'];
     return {
-      message: 'You did it!',
+      message: 'Kamu dapat akses',
     };
   }
 }
