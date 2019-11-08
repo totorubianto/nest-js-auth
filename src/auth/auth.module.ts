@@ -13,7 +13,7 @@ import { AuthSchema } from './schema/auth.schema';
     MongooseModule.forFeature([{ name: 'Auth', schema: AuthSchema }]),
     PassportModule.register({ defaultStrategy: 'jwt', session: false }),
     JwtModule.register({
-      secretOrPrivateKey: 'rahasia',
+      secret: 'rahasia',
       signOptions: {
         expiresIn: 3600,
       },

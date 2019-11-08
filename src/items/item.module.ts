@@ -11,7 +11,7 @@ import { UsersModule } from '../users/users.module';
     MongooseModule.forFeature([{ name: 'Item', schema: ItemSchema }]),
     PassportModule.register({ defaultStrategy: 'jwt', session: false }),
     JwtModule.register({
-      secretOrPrivateKey: 'rahasia',
+      secret: 'rahasia',
       signOptions: {
         expiresIn: 3600,
       },

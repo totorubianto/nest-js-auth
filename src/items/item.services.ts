@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Item } from './interfaces/item.interface';
 import { Model } from 'mongoose';
-import mongoose from 'mongoose';
+
 import { InjectModel } from '@nestjs/mongoose';
 import { UsersService } from '../users/users.service';
 import { _ } from 'lodash';
@@ -45,7 +49,11 @@ export class ItemService {
   }
 
   async findOne(id: string): Promise<Item> {
-    return await this.itemModel.findOne({ _id: id });
+    try {
+      return await this.itemModel.findOne({ _id: id });
+    } catch (error) {
+      throw new NotFoundException();
+    }
   }
 
   async create(item: Item, data): Promise<Item> {
@@ -59,7 +67,13 @@ export class ItemService {
     return await this.itemModel.findByIdAndRemove(id);
   }
 
-  async update(id: string, item: Item): Promise<Item> {
-    return await this.itemModel.findByIdAndUpdate(id, item, { new: true });
+  async update(id: string, item: Item, data: any): Promise<Item> {
+    try {
+      const user = await this.itemModel.findOne({ _id: id });
+      if (!user) throw new UnauthorizedException();
+      return await this.itemModel.findByIdAndUpdate(id, item, { new: true });
+    } catch (error) {
+      throw new UnauthorizedException();
+    }
   }
 }

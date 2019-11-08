@@ -7,17 +7,22 @@ import {
   UsePipes,
   Headers,
   Request,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { TokenDto } from './dto/create-token.dto';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ValidationPipe } from '../middleware/validate.pipe';
-import { Roles } from '../middleware/guard.decorator';
-import { RolesGuard } from '../middleware/user.guard';
+import { ValidationPipe } from '../middleware/pipe/validate.pipe';
+import { Roles } from '../middleware/decorator/guard.decorator';
+import { RolesGuard } from '../middleware/guard/user.guard';
+import { UserCustom } from '../middleware/decorator/userLogged.decorator';
+import { TransferDto } from '../users/dto/transfer.dto';
+import { TransformInterceptor } from '../middleware/interceptor/transform.interceptor';
 @Controller('users')
 @UsePipes(ValidationPipe)
+@UseInterceptors(TransformInterceptor)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
@@ -25,16 +30,20 @@ export class UsersController {
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
   }
-  @Get()
+  @Get('all')
   findAll(): Promise<any[]> {
     return this.usersService.findAll();
   }
   @Get('test')
   @UseGuards(AuthGuard())
   testAuthRoute(@Headers() token: TokenDto, @Request() req) {
-    const dataToken = token['authorization'];
     return {
       message: 'Kamu dapat akses',
     };
+  }
+  @Post('transfer')
+  @UseGuards(AuthGuard())
+  async transfer(@Body() data: TransferDto, @UserCustom() user: any) {
+    return await this.usersService.transfer(data, user);
   }
 }

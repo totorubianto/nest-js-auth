@@ -5,9 +5,13 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UserSchema } from './schema/user.schema';
 import { AuthMiddleware } from '../middleware/auth.middleware';
+import { TransactionSchema } from './schema/transaction.schema';
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: 'User', schema: UserSchema },
+      { name: 'Transaction', schema: TransactionSchema },
+    ]),
     PassportModule.register({ defaultStrategy: 'jwt', session: false }),
   ],
   exports: [UsersService],

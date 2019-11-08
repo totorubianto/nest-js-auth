@@ -16,11 +16,11 @@ import { AuthGuard } from '@nestjs/passport';
 import { ItemService } from './item.services';
 import { CreateItemDto } from './dto/create-item.dto';
 import { Item } from './interfaces/item.interface';
-import { ValidationPipe } from '../middleware/validate.pipe';
-import { UserCustom } from '../middleware/userLogged.decorator';
+import { ValidationPipe } from '../middleware/pipe/validate.pipe';
+import { UserCustom } from '../middleware/decorator/userLogged.decorator';
 // import { HttpExceptionFilter } from '../middleware/http-exception.filter';
-import { Roles } from '../middleware/guard.decorator';
-import { RolesGuard } from '../middleware/user.guard';
+import { Roles } from '../middleware/decorator/guard.decorator';
+import { RolesGuard } from '../middleware/guard/user.guard';
 
 @Controller('item')
 @UseGuards(RolesGuard)
@@ -32,7 +32,6 @@ export class ItemController {
   constructor(private readonly itemService: ItemService) {}
 
   @Get()
-  @Roles('admin')
   findAll(): Promise<Item[]> {
     return this.itemService.findAll();
   }
@@ -72,13 +71,12 @@ export class ItemController {
 
   @Put(':id')
   @UseGuards(AuthGuard())
-  @Roles('user')
+  @Roles('admin')
   update(
     @Body() updateItemDto: CreateItemDto,
     @Param('id') id,
     @UserCustom() data: any,
-  ): Promise<Item> {
-    console.log(data);
-    return this.itemService.update(id, updateItemDto);
+  ): Promise<any> {
+    return this.itemService.update(id, updateItemDto, data);
   }
 }

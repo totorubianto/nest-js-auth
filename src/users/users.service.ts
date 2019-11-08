@@ -1,16 +1,30 @@
 import { Model } from 'mongoose';
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  NotAcceptableException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Transaction } from './interfaces/transaction.interface';
 import { User } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
-
+import { TransferDto } from './dto/transfer.dto';
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('User') private userModel: Model<User>) {}
+  constructor(
+    @InjectModel('User') private userModel: Model<User>,
+    @InjectModel('Transaction') private transaction: Model<Transaction>,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
-    let createdUser = new this.userModel(createUserDto);
-    return await createdUser.save();
+    try {
+      const user = await this.userModel.findOne({ email: createUserDto.email });
+      if (user) throw new NotFoundException();
+      let createdUser = new this.userModel(createUserDto);
+      return await createdUser.save();
+    } catch (error) {
+      throw new NotFoundException();
+    }
   }
 
   async findOneByEmail(email): Model<User> {
@@ -18,5 +32,42 @@ export class UsersService {
   }
   async findAll(): Model<User> {
     return await this.userModel.find();
+  }
+
+  async transfer(data: TransferDto, user: any): Model<User> {
+    const session = await this.userModel.startSession();
+    session.startTransaction();
+
+    try {
+      const sender = await this.userModel
+        .findOne({ email: user.email })
+        .session(session);
+
+      sender.balance = sender.balance - data.amount;
+      if (sender.balance < data.amount) {
+        throw new NotAcceptableException();
+      }
+      await sender.save();
+      const receiver = await this.userModel
+        .findOne({
+          email: data.to,
+        })
+        .session(session);
+      receiver.balance = receiver.balance + data.amount;
+      await receiver.save();
+      await this.transaction({
+        date: Date.now(),
+        to: data.to,
+        total: data.amount,
+        from: user.email,
+      }).save({ session: session });
+      await session.commitTransaction();
+      return sender;
+    } catch (error) {
+      await session.abortTransaction();
+      throw new NotAcceptableException();
+    } finally {
+      session.endSession();
+    }
   }
 }
