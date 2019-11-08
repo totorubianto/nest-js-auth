@@ -43,6 +43,8 @@ export class UsersService {
         .findOne({ email: user.email })
         .session(session);
 
+      const opts = { session };
+
       sender.balance = sender.balance - data.amount;
       if (sender.balance < data.amount) {
         throw new NotAcceptableException();
@@ -60,7 +62,8 @@ export class UsersService {
         to: data.to,
         total: data.amount,
         from: user.email,
-      }).save({ session: session });
+      }).save(opts);
+
       await session.commitTransaction();
       return sender;
     } catch (error) {
