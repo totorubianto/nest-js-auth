@@ -53,12 +53,11 @@ export class UsersService {
   async transfer(data: TransferDto, user: any): Model<User> {
     const session = await this.userModel.startSession();
     session.startTransaction();
-
     try {
       const sender = await this.userModel
         .findOne({ email: user.email })
         .session(session);
-
+      
       const opts = { session };
 
       sender.balance = sender.balance - data.amount;
