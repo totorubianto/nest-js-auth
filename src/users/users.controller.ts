@@ -37,7 +37,7 @@ export class UsersController {
   }
   @Post('transfer')
   @UseGuards(AuthGuard())
-  @Roles('admin')
+  @Roles('admin', 'user')
   async transfer(@Body() data: TransferDto, @UserCustom() user: any) {
     return await this.usersService.transfer(data, user);
   }
