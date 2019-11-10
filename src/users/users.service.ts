@@ -1,14 +1,17 @@
 import { Model } from 'mongoose';
 import {
   Injectable,
-  NotFoundException,
+  BadRequestException,
   NotAcceptableException,
+  HttpStatus,
 } from '@nestjs/common';
+import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { InjectModel } from '@nestjs/mongoose';
 import { Transaction } from './interfaces/transaction.interface';
 import { User } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { TransferDto } from './dto/transfer.dto';
+import { HttpExceptionFilter } from 'src/middleware/filter/http-exception.filter';
 @Injectable()
 export class UsersService {
   constructor(
@@ -18,12 +21,25 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     try {
+   
       const user = await this.userModel.findOne({ email: createUserDto.email });
-      if (user) throw new NotFoundException();
+      if (user){
+        throw new HttpException(
+          {
+            data:{
+              message: "Input data validation failed",
+              errors: {
+                  email: "email sudah terdaftar",
+              }
+            }
+          },
+          HttpStatus.BAD_REQUEST,
+        )
+      } 
       let createdUser = new this.userModel(createUserDto);
       return await createdUser.save();
     } catch (error) {
-      throw new NotFoundException();
+      throw new HttpException(error.message, error.status);
     }
   }
 
