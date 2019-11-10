@@ -19,13 +19,5 @@ export class RolesGuard implements CanActivate {
     const user = JWT(req.headers['authorization']);
 
     return roles.some(role => role === user.role);
-
-    // let user = this.usersService.findOneByEmail(payload.email);
-    // console.log(user);
-    // if (user.role === 'admin') {
-    //   return this.createJwtPayload(user);
-    // } else {
-    //   throw new UnauthorizedException();
-    // }
   }
 }

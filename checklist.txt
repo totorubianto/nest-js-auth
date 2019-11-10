@@ -1,0 +1,6 @@
+
+USER
+
+1. register berhasil 			[v]
+2. register name sama 			[v]
+3. getUser				[x]

@@ -5,14 +5,11 @@ import {
   Body,
   UseGuards,
   UsePipes,
-  Headers,
-  Request,
   UseInterceptors,
   UseFilters
 } from '@nestjs/common';
 
 import { CreateUserDto } from './dto/create-user.dto';
-import { TokenDto } from './dto/create-token.dto';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ValidationPipe } from '../middleware/pipe/validate.pipe';
@@ -24,7 +21,7 @@ import { TransformInterceptor } from '../middleware/interceptor/transform.interc
 import {HttpExceptionFilter} from '../middleware/filter/http-exception.filter'
 @Controller('users')
 @UsePipes(ValidationPipe)
-// @UseFilters(HttpExceptionFilter)
+@UseFilters(HttpExceptionFilter)
 @UseInterceptors(TransformInterceptor)
 export class UsersController {
   constructor(private usersService: UsersService) {}
@@ -33,16 +30,9 @@ export class UsersController {
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
   }
-  @Get('all')
+  @Get()
   findAll(): Promise<any[]> {
     return this.usersService.findAll();
-  }
-  @Get('test')
-  @UseGuards(AuthGuard())
-  testAuthRoute(@Headers() token: TokenDto, @Request() req) {
-    return {
-      message: 'Kamu dapat akses',
-    };
   }
   @Post('transfer')
   @UseGuards(AuthGuard())
