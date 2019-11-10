@@ -1,8 +1,17 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UseFilters,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 import * as JWT from 'jwt-decode';
+import { HttpExceptionFilter } from '../filter/http-exception.filter';
 @Injectable()
+@UseFilters(HttpExceptionFilter)
 export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 

@@ -5,3 +5,4 @@ USER
 2. register name sama 			[v]
 3. getUser				[v]
 4. transfer oke				[v]
+5. guard belum sama stylenya		[v]

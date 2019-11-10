@@ -6,7 +6,7 @@ import {
   UseGuards,
   UsePipes,
   UseInterceptors,
-  UseFilters
+  UseFilters,
 } from '@nestjs/common';
 
 import { CreateUserDto } from './dto/create-user.dto';
@@ -18,11 +18,12 @@ import { RolesGuard } from '../middleware/guard/user.guard';
 import { UserCustom } from '../middleware/decorator/userLogged.decorator';
 import { TransferDto } from '../users/dto/transfer.dto';
 import { TransformInterceptor } from '../middleware/interceptor/transform.interceptor';
-import {HttpExceptionFilter} from '../middleware/filter/http-exception.filter'
+import { HttpExceptionFilter } from '../middleware/filter/http-exception.filter';
 @Controller('users')
 @UsePipes(ValidationPipe)
 @UseFilters(HttpExceptionFilter)
 @UseInterceptors(TransformInterceptor)
+@UseGuards(RolesGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
@@ -36,6 +37,7 @@ export class UsersController {
   }
   @Post('transfer')
   @UseGuards(AuthGuard())
+  @Roles('admin')
   async transfer(@Body() data: TransferDto, @UserCustom() user: any) {
     return await this.usersService.transfer(data, user);
   }

@@ -1,17 +1,12 @@
 import { Model } from 'mongoose';
-import {
-  Injectable,
-  BadRequestException,
-  NotAcceptableException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { InjectModel } from '@nestjs/mongoose';
 import { Transaction } from './interfaces/transaction.interface';
 import { User } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { TransferDto } from './dto/transfer.dto';
-import { HttpExceptionFilter } from 'src/middleware/filter/http-exception.filter';
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -21,21 +16,20 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     try {
-   
       const user = await this.userModel.findOne({ email: createUserDto.email });
-      if (user){
+      if (user) {
         throw new HttpException(
           {
-            data:{
-              message: "Input data validation failed",
+            data: {
+              message: 'Input data validation failed',
               errors: {
-                  email: "email sudah terdaftar",
-              }
-            }
+                email: 'email sudah terdaftar',
+              },
+            },
           },
           HttpStatus.BAD_REQUEST,
-        )
-      } 
+        );
+      }
       let createdUser = new this.userModel(createUserDto);
       return await createdUser.save();
     } catch (error) {
@@ -46,6 +40,7 @@ export class UsersService {
   async findOneByEmail(email): Model<User> {
     return await this.userModel.findOne({ email: email });
   }
+
   async findAll(): Model<User> {
     return await this.userModel.find();
   }
@@ -57,22 +52,22 @@ export class UsersService {
       const sender = await this.userModel
         .findOne({ email: user.email })
         .session(session);
-      
+
       const opts = { session };
 
       sender.balance = sender.balance - data.amount;
       if (sender.balance < data.amount) {
         throw new HttpException(
           {
-            data:{
-              message: "Input data validation failed",
+            data: {
+              message: 'Input data validation failed',
               errors: {
-                  amount: "saldo yang anda kurang",
-              }
-            }
+                amount: 'saldo yang anda kurang',
+              },
+            },
           },
           HttpStatus.BAD_REQUEST,
-        )
+        );
       }
       await sender.save();
       const receiver = await this.userModel
