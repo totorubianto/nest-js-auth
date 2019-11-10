@@ -62,7 +62,17 @@ export class UsersService {
 
       sender.balance = sender.balance - data.amount;
       if (sender.balance < data.amount) {
-        throw new NotAcceptableException();
+        throw new HttpException(
+          {
+            data:{
+              message: "Input data validation failed",
+              errors: {
+                  amount: "saldo yang anda kurang",
+              }
+            }
+          },
+          HttpStatus.BAD_REQUEST,
+        )
       }
       await sender.save();
       const receiver = await this.userModel
@@ -83,7 +93,7 @@ export class UsersService {
       return sender;
     } catch (error) {
       await session.abortTransaction();
-      throw new NotAcceptableException();
+      throw new HttpException(error.message, error.status);
     } finally {
       session.endSession();
     }
