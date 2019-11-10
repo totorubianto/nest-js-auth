@@ -49,6 +49,18 @@ export class UsersService {
     const session = await this.userModel.startSession();
     session.startTransaction();
     try {
+      if (data.to === user.email)
+        throw new HttpException(
+          {
+            data: {
+              message: 'Input data validation failed',
+              errors: {
+                email: 'anda transfer ke diri sendiri',
+              },
+            },
+          },
+          HttpStatus.BAD_REQUEST,
+        );
       const sender = await this.userModel
         .findOne({ email: user.email })
         .session(session);
@@ -75,6 +87,18 @@ export class UsersService {
           email: data.to,
         })
         .session(session);
+      if (!receiver)
+        throw new HttpException(
+          {
+            data: {
+              message: 'Input data validation failed',
+              errors: {
+                email: 'tidak ditemukan alamat penerima',
+              },
+            },
+          },
+          HttpStatus.BAD_REQUEST,
+        );
       receiver.balance = receiver.balance + data.amount;
       await receiver.save();
       await this.transaction({
@@ -84,8 +108,8 @@ export class UsersService {
         from: user.email,
       }).save(opts);
 
-      await session.commitTransaction();
-      return sender;
+      const result = await session.commitTransaction();
+      return result;
     } catch (error) {
       await session.abortTransaction();
       throw new HttpException(error.message, error.status);

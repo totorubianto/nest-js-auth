@@ -5,10 +5,9 @@ import {
 } from '@nestjs/common';
 import { Item } from './interfaces/item.interface';
 import { Model } from 'mongoose';
-
 import { InjectModel } from '@nestjs/mongoose';
 import { UsersService } from '../users/users.service';
-import { _ } from 'lodash';
+
 @Injectable()
 export class ItemService {
   constructor(
@@ -18,33 +17,6 @@ export class ItemService {
 
   async findAll(): Promise<any[]> {
     const data = await this.itemModel.find().populate('user');
-
-    // let hash = Object.create(null);
-
-    // let result = data.map(
-    //   (hash => item =>
-    //     (hash[item.user] = {
-    //       _id: item._id,
-    //       item: item.item,
-    //       description: item.description,
-    //       user: item.user,
-    //       users: {},
-    //     }))(hash),
-    // );
-    // data.map(itemLoop => {
-    //   user.forEach(
-    //     (hash => user => {
-    //       if (_.findKey(data, { user: user._id })) {
-    //         hash[user._id].users = {
-    //           _id: user._id,
-    //           email: user.email,
-    //           role: user.role,
-    //         };
-    //       }
-    //     })(hash),
-    //   );
-    // });
-
     return data;
   }
 
