@@ -69,13 +69,15 @@ export class ItemController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard())
+  @Roles('admin', 'user')
   delete(@Param('id') id, @UserCustom() data: any): Promise<Item> {
     return this.itemService.delete(id, data);
   }
 
   @Put(':id')
   @UseGuards(AuthGuard())
-  @Roles('admin')
+  @Roles('admin', 'user')
   update(
     @Body() updateItemDto: CreateItemDto,
     @Param('id') id,
