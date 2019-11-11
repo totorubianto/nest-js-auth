@@ -69,8 +69,8 @@ export class ItemController {
   }
 
   @Delete(':id')
-  delete(@Param('id') id): Promise<Item> {
-    return this.itemService.delete(id);
+  delete(@Param('id') id, @UserCustom() data: any): Promise<Item> {
+    return this.itemService.delete(id, data);
   }
 
   @Put(':id')
