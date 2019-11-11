@@ -16,7 +16,7 @@ export class ItemService {
   ) {}
 
   async findAll(): Promise<any[]> {
-    const data = await this.itemModel.find().populate('user');
+    const data = await this.itemModel.find().populate('user', '-balance');
     return data;
   }
 
@@ -30,7 +30,8 @@ export class ItemService {
 
   async create(item: Item, data): Promise<Item> {
     let itemData = item;
-    itemData.user = data;
+    itemData.user = data._id;
+
     const newItem = new this.itemModel(item);
     return await newItem.save();
   }

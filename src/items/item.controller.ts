@@ -10,6 +10,7 @@ import {
   HttpStatus,
   UsePipes,
   UseGuards,
+  UseInterceptors,
   UseFilters,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -21,11 +22,13 @@ import { UserCustom } from '../middleware/decorator/userLogged.decorator';
 import { HttpExceptionFilter } from '../middleware/filter/http-exception.filter';
 import { Roles } from '../middleware/decorator/guard.decorator';
 import { RolesGuard } from '../middleware/guard/user.guard';
+import { TransformInterceptor } from '../middleware/interceptor/transform.interceptor';
 
 @Controller('item')
 @UseGuards(RolesGuard)
 @UsePipes(ValidationPipe)
 @UseFilters(HttpExceptionFilter)
+@UseInterceptors(TransformInterceptor)
 // @UseInterceptors(ErrorsInterceptor)
 // @UseInterceptors(CacheInterceptor)
 // @UseInterceptors(TimeoutInterceptor)
@@ -60,7 +63,7 @@ export class ItemController {
 
   @Post('')
   @UseGuards(AuthGuard())
-  @Roles('admin')
+  @Roles('admin', 'user')
   create(@Body() createItemDto: CreateItemDto, @UserCustom() data: any) {
     return this.itemService.create(createItemDto, data);
   }
