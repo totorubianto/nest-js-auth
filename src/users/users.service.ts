@@ -101,14 +101,14 @@ export class UsersService {
         );
       receiver.balance = receiver.balance + data.amount;
       await receiver.save();
-      await this.transaction({
+      const result = await this.transaction({
         date: Date.now(),
         to: data.to,
         total: data.amount,
         from: user.email,
       }).save(opts);
 
-      const result = await session.commitTransaction();
+      await session.commitTransaction();
       return result;
     } catch (error) {
       await session.abortTransaction();

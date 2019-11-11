@@ -12,7 +12,7 @@ import { ItemModule } from './items/item.module';
     AuthModule,
     UsersModule,
     ItemModule,
-    MongooseModule.forRoot('mongodb://DESKTOP-H8H8051:27017/mareco', {
+    MongooseModule.forRoot('mongodb://localhost:27017/mareco', {
       useCreateIndex: true,
       useNewUrlParser: true,
       useUnifiedTopology: true,
