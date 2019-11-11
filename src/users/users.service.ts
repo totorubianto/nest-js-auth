@@ -101,12 +101,27 @@ export class UsersService {
         );
       receiver.balance = receiver.balance + data.amount;
       await receiver.save();
-      const result = await this.transaction({
+      const transaction = await this.transaction({
         date: Date.now(),
-        to: data.to,
+        to: receiver._id,
         total: data.amount,
-        from: user.email,
+        from: user._id,
       }).save(opts);
+
+      const result = await this.transaction
+        .findById(transaction._id)
+        .populate([
+          {
+            path: 'to',
+            populate: { path: 'user' },
+            select: '_id name email',
+          },
+          {
+            path: 'from',
+            populate: { path: 'user' },
+          },
+        ])
+        .session(session);
 
       await session.commitTransaction();
       return result;

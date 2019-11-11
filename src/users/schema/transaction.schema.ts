@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-
+const Schema = mongoose.Schema;
 export const TransactionSchema = new mongoose.Schema({
   date: {
     type: String,
@@ -7,11 +7,13 @@ export const TransactionSchema = new mongoose.Schema({
     required: true,
   },
   from: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
   },
   to: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
   },
   total: {
