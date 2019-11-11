@@ -7,3 +7,4 @@ USER
 4. getUser				        [v]
 5. transfer oke				    [v]
 6. guard belum sama stylenya	[v]
+7. getItem                      [v]

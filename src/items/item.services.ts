@@ -78,20 +78,30 @@ export class ItemService {
 
   async update(id: string, item: Item, data: any): Promise<Item> {
     try {
-      const itemData = await this.itemModel.findOne({ user: data._id });
+      const itemData = await this.itemModel
+        .findOneAndUpdate(
+          {
+            _id: id,
+            user: data._id,
+          },
+          item,
+          { new: true },
+        )
+        .populate('user');
+
       if (!itemData)
         throw new HttpException(
           {
             data: {
-              message: 'Anda tidak dapat mengedit punya orang lain',
+              message: 'Input data failed',
               errors: {
-                item: 'Barang ini bukan milik anda',
+                item: 'tidak ditemukan barang di koleksi anda',
               },
             },
           },
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.NOT_FOUND,
         );
-      return await this.itemModel.findByIdAndUpdate(id, item, { new: true });
+      return itemData;
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
