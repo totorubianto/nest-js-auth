@@ -2,6 +2,8 @@ import {
   Injectable,
   UnauthorizedException,
   NotFoundException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Item } from './interfaces/item.interface';
 import { Model } from 'mongoose';
@@ -45,10 +47,21 @@ export class ItemService {
   async update(id: string, item: Item, data: any): Promise<Item> {
     try {
       const itemData = await this.itemModel.findOne({ user: data._id });
-      if (!itemData) throw new UnauthorizedException();
+      if (!itemData)
+        throw new HttpException(
+          {
+            data: {
+              message: 'Anda tidak dapat mengedit punya orang lain',
+              errors: {
+                item: 'Barang ini bukan milik anda',
+              },
+            },
+          },
+          HttpStatus.BAD_REQUEST,
+        );
       return await this.itemModel.findByIdAndUpdate(id, item, { new: true });
     } catch (error) {
-      throw new UnauthorizedException();
+      throw new HttpException(error.message, error.status);
     }
   }
 }
