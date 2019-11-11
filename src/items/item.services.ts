@@ -22,7 +22,9 @@ export class ItemService {
 
   async findOne(id: string): Promise<Item> {
     try {
-      return await this.itemModel.findOne({ _id: id });
+      return await this.itemModel
+        .findOne({ _id: id })
+        .populate('user', '-balance');
     } catch (error) {
       throw new NotFoundException();
     }
@@ -42,8 +44,8 @@ export class ItemService {
 
   async update(id: string, item: Item, data: any): Promise<Item> {
     try {
-      const user = await this.itemModel.findOne({ _id: id });
-      if (!user) throw new UnauthorizedException();
+      const itemData = await this.itemModel.findOne({ user: data._id });
+      if (!itemData) throw new UnauthorizedException();
       return await this.itemModel.findByIdAndUpdate(id, item, { new: true });
     } catch (error) {
       throw new UnauthorizedException();

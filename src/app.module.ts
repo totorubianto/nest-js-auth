@@ -16,6 +16,7 @@ import { ItemModule } from './items/item.module';
       useCreateIndex: true,
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useFindAndModify: false,
     }),
   ],
   controllers: [AppController],
