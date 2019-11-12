@@ -17,6 +17,7 @@ import { TransformInterceptor } from '../middleware/interceptor/transform.interc
 import { HttpExceptionFilter } from '../middleware/filter/http-exception.filter';
 import { AuthGuard } from '@nestjs/passport';
 import { UserCustom } from '../middleware/decorator/userLogged.decorator';
+import { BuyTransactionDto } from './dto/buyTransaction.dto';
 
 @Controller('buyitem')
 @UsePipes(ValidationPipe)
@@ -36,7 +37,10 @@ export class BuyController {
   @Post()
   @UseGuards(AuthGuard())
   @Roles('admin', 'user')
-  async create(@Body() createBuyTransaction: any, @UserCustom() user: any) {
-    return await this.buyService.create(createBuyTransaction, user);
+  async create(
+    @Body() buyTransactionDto: BuyTransactionDto,
+    @UserCustom() user: any,
+  ) {
+    return await this.buyService.create(buyTransactionDto, user);
   }
 }
