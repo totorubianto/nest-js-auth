@@ -12,7 +12,7 @@ import * as fs from 'fs';
 export class UsersService {
   constructor(
     @InjectModel('User') private userModel: Model<User>,
-    @InjectModel('Transaction') private transaction: Model<Transaction>,
+    @InjectModel('Transfer') private transaction: Model<Transaction>,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -38,13 +38,17 @@ export class UsersService {
     }
   }
 
+  // findall user service
   async findOneByEmail(email): Model<User> {
     return await this.userModel.findOne({ email: email });
   }
 
+  // findall user service
   async findAll(): Model<User> {
     return await this.userModel.find();
   }
+
+  // upload user avatar service
   async uploadAvatar(data: any, user: any): Model<User> {
     const deleteImg = await this.userModel.findById(user._id);
 
@@ -79,6 +83,7 @@ export class UsersService {
     }
   }
 
+  // transfer user service
   async transfer(data: TransferDto, user: any): Model<User> {
     const session = await this.userModel.startSession();
     session.startTransaction();

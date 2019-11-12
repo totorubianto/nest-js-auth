@@ -35,14 +35,19 @@ import {
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
+  // getPost
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
   }
+
+  // getUserAll
   @Get()
   findAll(): Promise<any[]> {
     return this.usersService.findAll();
   }
+
+  // user transfer (user to user)
   @Post('transfer')
   @UseGuards(AuthGuard())
   @Roles('admin', 'user')
@@ -50,6 +55,7 @@ export class UsersController {
     return await this.usersService.transfer(data, user);
   }
 
+  // upload avatar
   @Post('upload-avatar')
   @UseGuards(AuthGuard())
   @Roles('admin', 'user')

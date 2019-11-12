@@ -1,19 +1,22 @@
 import * as mongoose from 'mongoose';
 const Schema = mongoose.Schema;
-
-export const ItemSchema = new mongoose.Schema({
-  item: {
+export const BuyTransactionSchema = new mongoose.Schema({
+  date: {
     type: String,
+    unique: true,
     required: true,
   },
-  description: String,
-  price: { type: Number, required: true },
-  user: {
+  from: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
   },
-  total_items: {
+  to: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  total: {
     type: Number,
     required: true,
   },

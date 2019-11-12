@@ -11,6 +11,7 @@ export class ItemService {
     private readonly usersService: UsersService,
   ) {}
 
+  // find all item services
   async findAll(): Promise<any[]> {
     try {
       const data = await this.itemModel.find().populate('user', '-balance');
@@ -27,7 +28,7 @@ export class ItemService {
       );
     }
   }
-
+  // find one item services
   async findOne(id: string): Promise<Item> {
     try {
       const item = await this.itemModel
@@ -51,6 +52,7 @@ export class ItemService {
     }
   }
 
+  // create item services
   async create(item: Item, data): Promise<Item> {
     let itemData = item;
     itemData.user = data._id;
@@ -58,6 +60,7 @@ export class ItemService {
     return await newItem.save();
   }
 
+  // delete item service
   async delete(id: string, user: any): Promise<Item> {
     try {
       const deleteData = await this.itemModel.findOneAndRemove({
@@ -82,6 +85,7 @@ export class ItemService {
     }
   }
 
+  // update item services
   async update(id: string, item: Item, data: any): Promise<Item> {
     try {
       const itemData = await this.itemModel

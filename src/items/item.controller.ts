@@ -33,16 +33,19 @@ import { TransformInterceptor } from '../middleware/interceptor/transform.interc
 export class ItemController {
   constructor(private readonly itemService: ItemService) {}
 
+  // get all item controller
   @Get()
   findAll(): Promise<Item[]> {
     return this.itemService.findAll();
   }
 
+  // get id item controller
   @Get(':id')
   findOne(@Param('id') id): Promise<Item> {
     return this.itemService.findOne(id);
   }
 
+  // create item controller
   @Post('')
   @UseGuards(AuthGuard())
   @Roles('admin', 'user')
@@ -50,6 +53,7 @@ export class ItemController {
     return this.itemService.create(createItemDto, data);
   }
 
+  // delete item controller
   @Delete(':id')
   @UseGuards(AuthGuard())
   @Roles('admin', 'user')
@@ -57,6 +61,7 @@ export class ItemController {
     return this.itemService.delete(id, data);
   }
 
+  // edit item controller
   @Put(':id')
   @UseGuards(AuthGuard())
   @Roles('admin', 'user')

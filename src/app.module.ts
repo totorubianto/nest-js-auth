@@ -1,11 +1,11 @@
 import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
-import { UsersController } from './users/users.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ItemModule } from './items/item.module';
+import { BuyModule } from './transaction/buyTransaction.module';
 
 let db;
 if (process.env.NODE_ENV === 'test') {
@@ -19,6 +19,7 @@ if (process.env.NODE_ENV === 'test') {
     AuthModule,
     UsersModule,
     ItemModule,
+    BuyModule,
     MongooseModule.forRoot(db, {
       useCreateIndex: true,
       useNewUrlParser: true,

@@ -3,4 +3,5 @@ export interface Item {
   item: string;
   user?: any;
   description?: string;
+  total_items?: number;
 }

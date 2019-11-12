@@ -11,7 +11,7 @@ import { TransactionSchema } from './schema/transaction.schema';
   imports: [
     MongooseModule.forFeature([
       { name: 'User', schema: UserSchema },
-      { name: 'Transaction', schema: TransactionSchema },
+      { name: 'Transfer', schema: TransactionSchema },
     ]),
     PassportModule.register({ defaultStrategy: 'jwt', session: false }),
   ],

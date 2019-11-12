@@ -7,4 +7,6 @@ export class CreateItemDto {
   readonly description: string;
   @IsNumber()
   readonly price: number;
+  @IsNumber()
+  readonly total_items: number;
 }
