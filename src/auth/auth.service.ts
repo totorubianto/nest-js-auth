@@ -24,6 +24,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  // validation user by password
   async validateUserByPassword(loginAttempt: LoginUserDto) {
     try {
       let userToAttempt = await this.usersService.findOneByEmail(
@@ -73,6 +74,7 @@ export class AuthService {
     }
   }
 
+  // find token from header and check of auth model
   async findTokenEmail(token): Model<Auth> {
     const tokenNotBearer = token.replace('Bearer ', '');
     try {
@@ -83,6 +85,7 @@ export class AuthService {
     }
   }
 
+  // validate user by jwt
   async validateUserByJwt(payload: JwtPayload, token: string) {
     let user = await this.findTokenEmail(token);
     if (user) {
@@ -99,6 +102,7 @@ export class AuthService {
     }
   }
 
+  // create jwt payload
   createJwtPayload(user) {
     let data: JwtPayload = {
       _id: user._id,
