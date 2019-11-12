@@ -1,5 +1,5 @@
 import { Model } from 'mongoose';
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Transaction } from './interfaces/transaction.interface';
 
@@ -20,7 +20,18 @@ export class BuyService {
     ];
   }
 
-  async create(data: any): Model<Transaction> {
-    console.log(data);
+  async create(data: any, user: any): Model<Transaction> {
+    const session = await this.buyTransactionModel.startSession();
+    session.startTransaction();
+    try {
+      const result = [];
+      await session.commitTransaction();
+      return result;
+    } catch (error) {
+      await session.abortTransaction();
+      throw new HttpException(error.message, error.status);
+    } finally {
+      session.endSession();
+    }
   }
 }
