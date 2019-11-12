@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  NotFoundException,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Item } from './interfaces/item.interface';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -18,8 +12,20 @@ export class ItemService {
   ) {}
 
   async findAll(): Promise<any[]> {
-    const data = await this.itemModel.find().populate('user', '-balance');
-    return data;
+    try {
+      const data = await this.itemModel.find().populate('user', '-balance');
+      return data;
+    } catch (error) {
+      throw new HttpException(
+        {
+          data: {
+            message: 'Tidak ada barang',
+            errors: 'tidak ada barang',
+          },
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 
   async findOne(id: string): Promise<Item> {

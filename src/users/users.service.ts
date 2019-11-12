@@ -6,6 +6,7 @@ import { Transaction } from './interfaces/transaction.interface';
 import { User } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { TransferDto } from './dto/transfer.dto';
+import * as fs from 'fs';
 
 @Injectable()
 export class UsersService {
@@ -43,6 +44,39 @@ export class UsersService {
 
   async findAll(): Model<User> {
     return await this.userModel.find();
+  }
+  async uploadAvatar(data: any, user: any): Model<User> {
+    const deleteImg = await this.userModel.findById(user._id);
+
+    if (deleteImg.avatar) {
+      const pathDelete = './upload/avatar/' + deleteImg.avatar;
+      fs.unlinkSync(pathDelete);
+    }
+    try {
+      const itemData = await this.userModel.findByIdAndUpdate(
+        user._id,
+        { avatar: data.filename },
+        {
+          new: true,
+        },
+      );
+
+      if (!itemData)
+        throw new HttpException(
+          {
+            data: {
+              message: 'Input data failed',
+              errors: {
+                item: 'tidak ditemukan barang di koleksi anda',
+              },
+            },
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      return itemData;
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   async transfer(data: TransferDto, user: any): Model<User> {

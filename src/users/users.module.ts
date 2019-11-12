@@ -6,6 +6,7 @@ import { UsersService } from './users.service';
 import { UserSchema } from './schema/user.schema';
 import { AuthMiddleware } from '../middleware/auth.middleware';
 import { TransactionSchema } from './schema/transaction.schema';
+
 @Module({
   imports: [
     MongooseModule.forFeature([

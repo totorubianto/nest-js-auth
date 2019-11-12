@@ -7,12 +7,19 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ItemModule } from './items/item.module';
 
+let db;
+if (process.env.NODE_ENV === 'test') {
+  db = 'mongodb://localhost:27017/marecotest';
+} else {
+  db = 'mongodb://localhost:27017/mareco';
+}
+
 @Module({
   imports: [
     AuthModule,
     UsersModule,
     ItemModule,
-    MongooseModule.forRoot('mongodb://localhost:27017/mareco', {
+    MongooseModule.forRoot(db, {
       useCreateIndex: true,
       useNewUrlParser: true,
       useUnifiedTopology: true,

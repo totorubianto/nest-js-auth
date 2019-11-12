@@ -8,3 +8,4 @@ USER
 5. transfer oke				    [v]
 6. guard belum sama stylenya	[v]
 7. getItem                      [v]
+8. crud getItem                 [v]

@@ -6,8 +6,6 @@ import {
   Delete,
   Put,
   Param,
-  HttpException,
-  HttpStatus,
   UsePipes,
   UseGuards,
   UseInterceptors,
@@ -38,22 +36,6 @@ export class ItemController {
   @Get()
   findAll(): Promise<Item[]> {
     return this.itemService.findAll();
-  }
-
-  @Get('exception')
-  exception(): Promise<Item[]> {
-    throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-  }
-
-  @Get('custom-exception')
-  async customException() {
-    throw new HttpException(
-      {
-        status: HttpStatus.FORBIDDEN,
-        error: 'This is a custom message',
-      },
-      403,
-    );
   }
 
   @Get(':id')
